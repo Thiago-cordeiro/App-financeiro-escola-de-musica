@@ -1,0 +1,129 @@
+erDiagram
+
+    ADMINISTRADOR {
+        bigint id_administrador PK
+        varchar nome
+        varchar email UK
+        varchar senha_hash
+        varchar nivel_acesso
+        boolean ativo
+        datetime criado_em
+        datetime atualizado_em
+    }
+
+    PROFESSOR {
+        bigint id_professor PK
+        varchar nome
+        varchar email UK
+        varchar telefone
+        varchar chave_pix
+        boolean ativo
+        datetime criado_em
+        datetime atualizado_em
+    }
+
+    ALUNO {
+        bigint id_aluno PK
+        varchar nome
+        varchar email
+        varchar telefone
+        date data_entrada
+        date data_saida
+        boolean ativo
+        datetime criado_em
+        datetime atualizado_em
+    }
+
+    INSTRUMENTO {
+        bigint id_instrumento PK
+        varchar nome UK
+        varchar descricao
+        boolean ativo
+    }
+
+    MATERIA {
+        bigint id_materia PK
+        bigint id_instrumento FK
+        varchar nome
+        varchar descricao
+        boolean ativo
+    }
+
+    PROFESSOR_MATERIA {
+        bigint id_professor_materia PK
+        bigint id_professor FK
+        bigint id_materia FK
+        datetime criado_em
+    }
+
+    MATRICULA {
+        bigint id_matricula PK
+        bigint id_aluno FK
+        bigint id_professor_materia FK
+        varchar status
+        decimal valor_mensal
+        date data_inicio
+        date data_fim
+        datetime criado_em
+        datetime atualizado_em
+    }
+
+    STATUS_PAGAMENTO {
+        bigint id_status_pagamento PK
+        varchar nome UK
+    }
+
+    PAGAMENTO_ALUNO {
+        bigint id_pagamento_aluno PK
+        bigint id_matricula FK
+        bigint id_administrador_recebedor FK
+        bigint id_status_pagamento FK
+        decimal valor
+        date competencia
+        date data_vencimento
+        datetime data_pagamento
+        varchar observacao
+        datetime criado_em
+        datetime atualizado_em
+    }
+
+    PAGAMENTO_PROFESSOR {
+        bigint id_pagamento_professor PK
+        bigint id_professor FK
+        bigint id_administrador_pagador FK
+        bigint id_status_pagamento FK
+        date competencia
+        decimal valor_total
+        datetime data_pagamento
+        varchar observacao
+        datetime criado_em
+        datetime atualizado_em
+    }
+
+    PAGAMENTO_PROFESSOR_ITEM {
+        bigint id_pagamento_professor_item PK
+        bigint id_pagamento_professor FK
+        bigint id_pagamento_aluno FK
+        decimal valor_repasse
+        datetime criado_em
+    }
+
+
+    INSTRUMENTO ||--o{ MATERIA : possui
+
+    PROFESSOR ||--o{ PROFESSOR_MATERIA : leciona
+    MATERIA ||--o{ PROFESSOR_MATERIA : possui
+
+    ALUNO ||--o{ MATRICULA : possui
+    PROFESSOR_MATERIA ||--o{ MATRICULA : corresponde
+
+    MATRICULA ||--o{ PAGAMENTO_ALUNO : gera
+    ADMINISTRADOR ||--o{ PAGAMENTO_ALUNO : recebe
+    STATUS_PAGAMENTO ||--o{ PAGAMENTO_ALUNO : possui
+
+    PROFESSOR ||--o{ PAGAMENTO_PROFESSOR : recebe
+    ADMINISTRADOR ||--o{ PAGAMENTO_PROFESSOR : realiza
+    STATUS_PAGAMENTO ||--o{ PAGAMENTO_PROFESSOR : possui
+
+    PAGAMENTO_PROFESSOR ||--|{ PAGAMENTO_PROFESSOR_ITEM : possui
+    PAGAMENTO_ALUNO ||--o| PAGAMENTO_PROFESSOR_ITEM : origina
