@@ -2,9 +2,13 @@ package com.escolamusica.gestao_pagamentos_api.models;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,6 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Entity
 @Table(name = "administrador")
@@ -44,9 +49,9 @@ public class Administrador {
     private String senhaHash;
 
     @NotNull
-    @Size(max = 50)
+    @Enumerated(EnumType.STRING)
     @Column(name = "nivel_acesso", nullable = false, length = 50)
-    private String nivelAcesso;
+    private Role role;
 
     @NotNull
     @Column(name = "ativo", nullable = false)
@@ -59,4 +64,12 @@ public class Administrador {
     @UpdateTimestamp
     @Column(name = "atualizado_em", nullable = false)
     private LocalDateTime atualizadoEm;
+
+    @PrePersist
+    @PreUpdate
+    void normalizeEmail() {
+        if (email != null) {
+            email = email.trim().toLowerCase(Locale.ROOT);
+        }
+    }
 }
